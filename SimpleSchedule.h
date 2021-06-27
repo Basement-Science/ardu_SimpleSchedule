@@ -18,7 +18,7 @@ private:
 	bool hasOverflowed = false;
 	bool timeToRun = false;
 public:
-	SimpleSchedule(const uint32_t interval_ms, void(*executedFunction)());
+	SimpleSchedule(const uint32_t interval_ms, void(*executedFunction)(), void (*errorFunction)(uint32_t) = &ErrorFkt);
 
 	bool needsProcessing(uint32_t time_ms);
 	void Process(uint32_t time_ms);

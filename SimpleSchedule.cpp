@@ -1,11 +1,11 @@
 #include "SimpleSchedule.h"
 
-SimpleSchedule::SimpleSchedule(const uint32_t interval_ms, void (*functionPointer)()) {
+SimpleSchedule::SimpleSchedule(const uint32_t interval_ms, void (*executedFunction)(), void (*errorFunction)(uint32_t) = &ErrorFkt) {
 	interval = interval_ms;
-	Task_funPtr = functionPointer;
+	Task_funPtr = executedFunction;
 	nextRun = lastRun + interval;
 
-	StepsSkipped_funPtr = &ErrorFkt;
+	StepsSkipped_funPtr = errorFunction;
 }
 
 void SimpleSchedule::ErrorFkt(uint32_t dontCare) {
