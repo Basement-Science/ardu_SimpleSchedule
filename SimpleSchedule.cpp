@@ -1,5 +1,12 @@
+/*
+A Simple, timer-overflow-proof Scheduler. Suitable for pseudo-realtime applications or long delay intervals.
+*/
 #include "SimpleSchedule.h"
 
+/* Set up a scheduler instance. 
+   interval_ms:      the interval you want between executions, in ms.
+   executedFunction: Function pointer to whatever you want to run at this interval.
+   errorFunction:    Function pointer to whatever you want to happen when intervals were skipped. */
 SimpleSchedule::SimpleSchedule(const uint32_t interval_ms, void (*executedFunction)(), void (*errorFunction)(uint32_t) = &ErrorFkt) {
 	interval = interval_ms;
 	Task_funPtr = executedFunction;
@@ -8,10 +15,14 @@ SimpleSchedule::SimpleSchedule(const uint32_t interval_ms, void (*executedFuncti
 	StepsSkipped_funPtr = errorFunction;
 }
 
+/* Default error function. Set your own in the Constructor.
+   Error functions get called if at least one intervall was skipped*/
 void SimpleSchedule::ErrorFkt(uint32_t dontCare) {
 	Serial.println("skip");
 }
 
+/* Checks if it's time to run your function. Should usually not be called externally. 
+   Call Process(uint32_t time_ms) instead.*/
 bool SimpleSchedule::needsProcessing(uint32_t time_ms) {
 	hasOverflowed = lastRun > time_ms;
 	timeToRun = time_ms >= nextRun;
@@ -27,6 +38,7 @@ bool SimpleSchedule::needsProcessing(uint32_t time_ms) {
 	return false;
 }
 
+/* Poll this REGULARLY to ensure your function gets called*/
 void SimpleSchedule::Process(uint32_t time_ms) {
 	if (needsProcessing(time_ms)) {
 		// Prepare for next run
